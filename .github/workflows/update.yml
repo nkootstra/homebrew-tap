@@ -39,13 +39,12 @@ jobs:
       - name: Render formula
         run: |
           sha() { grep "cue-$1.tar.gz" sha256sums.txt | cut -d' ' -f1; }
-          python3 scripts/render_formula.py \
-            "$version" \
-            "$(sha aarch64-apple-darwin)" \
-            "$(sha x86_64-apple-darwin)" \
-            "$(sha x86_64-unknown-linux-gnu)" \
-            "$(sha aarch64-unknown-linux-gnu)" \
-            > Formula/cue.rb.new
+          VERSION="$version" \
+          SHA_MAC_ARM="$(sha aarch64-apple-darwin)" \
+          SHA_MAC_X64="$(sha x86_64-apple-darwin)" \
+          SHA_LINUX_X64="$(sha x86_64-unknown-linux-gnu)" \
+          SHA_LINUX_ARM="$(sha aarch64-unknown-linux-gnu)" \
+          python3 scripts/render_formula.py > Formula/cue.rb.new
           mv Formula/cue.rb.new Formula/cue.rb
           ruby -c Formula/cue.rb
 
