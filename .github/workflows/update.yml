@@ -1,0 +1,62 @@
+name: update
+
+# Keeps Formula/cue.rb in sync with the latest cue release.
+# Runs shortly after every release via workflow_dispatch, and self-heals
+# on a schedule in case a trigger was missed. Uses only the repo's own
+# GITHUB_TOKEN — no personal access token required.
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "cue version to publish (e.g. 0.1.1); defaults to the latest release"
+        required: false
+
+permissions:
+  contents: write
+
+jobs:
+  update-formula:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Resolve version and checksums
+        id: release
+        run: |
+          if [ -n "${{ github.event.inputs.version }}" ]; then
+            version="${{ github.event.inputs.version }}"
+          else
+            version="$(curl -fsSL https://api.github.com/repos/nkootstra/cue/releases/latest | python3 -c 'import json,sys; print(json.load(sys.stdin)["tag_name"].lstrip("v"))')"
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          curl -fsSL -o sha256sums.txt \
+            "https://github.com/nkootstra/cue/releases/download/v${version}/sha256sums.txt"
+          cat sha256sums.txt
+
+      - name: Render formula
+        run: |
+          sha() { grep "cue-$1.tar.gz" sha256sums.txt | cut -d' ' -f1; }
+          python3 scripts/render_formula.py \
+            "$version" \
+            "$(sha aarch64-apple-darwin)" \
+            "$(sha x86_64-apple-darwin)" \
+            "$(sha x86_64-unknown-linux-gnu)" \
+            "$(sha aarch64-unknown-linux-gnu)" \
+            > Formula/cue.rb.new
+          mv Formula/cue.rb.new Formula/cue.rb
+          ruby -c Formula/cue.rb
+
+      - name: Commit if changed
+        run: |
+          git config user.name "cue-release-bot"
+          git config user.email "cue-release-bot@users.noreply.github.com"
+          if git diff --quiet Formula/cue.rb; then
+            echo "formula already at version ${{ steps.release.outputs.version }}"
+            exit 0
+          fi
+          git add Formula/cue.rb
+          git commit -m "cue ${{ steps.release.outputs.version }}"
+          git push
