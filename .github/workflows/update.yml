@@ -39,7 +39,7 @@ jobs:
       - name: Render formula
         run: |
           sha() { grep "cue-$1.tar.gz" sha256sums.txt | cut -d' ' -f1; }
-          VERSION="$version" \
+          VERSION="${{ steps.release.outputs.version }}" \
           SHA_MAC_ARM="$(sha aarch64-apple-darwin)" \
           SHA_MAC_X64="$(sha x86_64-apple-darwin)" \
           SHA_LINUX_X64="$(sha x86_64-unknown-linux-gnu)" \
