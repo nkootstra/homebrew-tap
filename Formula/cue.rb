@@ -1,26 +1,26 @@
 class Cue < Formula
   desc "Turn video and audio files into transcripts, subtitles, and descriptions"
   homepage "https://github.com/nkootstra/cue"
-  version "0.4.1"
+  version "0.5.0"
   license "MIT"
 
   on_macos do
     if Hardware::CPU.arm?
-      url "https://github.com/nkootstra/cue/releases/download/v0.4.1/cue-aarch64-apple-darwin.tar.gz"
-      sha256 "506890fd514ff9afbeef77f9f3672d05525e1f1b49516ae16ffa9deaeb2b8545"
+      url "https://github.com/nkootstra/cue/releases/download/v0.5.0/cue-aarch64-apple-darwin.tar.gz"
+      sha256 "a47dd33c4c8b221e6b72abcaaa8b848497b1350be8793aa2a829368771a9d48d"
     else
-      url "https://github.com/nkootstra/cue/releases/download/v0.4.1/cue-x86_64-apple-darwin.tar.gz"
-      sha256 "5c546718b9800802e52b803d560cc00b0706c28dcd5be329e3f6d761f9094ca3"
+      url "https://github.com/nkootstra/cue/releases/download/v0.5.0/cue-x86_64-apple-darwin.tar.gz"
+      sha256 "db617d06bfdf4965c3fb1c4152dc4b1599f389c363424075c435f9a503a51bbd"
     end
   end
 
   on_linux do
     if Hardware::CPU.arm? && Hardware::CPU.is_64_bit?
-      url "https://github.com/nkootstra/cue/releases/download/v0.4.1/cue-aarch64-unknown-linux-gnu.tar.gz"
-      sha256 "d8bed1192451398937936cbe0f1542820f45edd4ab87a32707266a6431861403"
+      url "https://github.com/nkootstra/cue/releases/download/v0.5.0/cue-aarch64-unknown-linux-gnu.tar.gz"
+      sha256 "55ebc963b0a61e642ee82a2d8a50a3bc694f04505ba9e6a0c22ec4bd9c492809"
     else
-      url "https://github.com/nkootstra/cue/releases/download/v0.4.1/cue-x86_64-unknown-linux-gnu.tar.gz"
-      sha256 "515cda31fb6422a26e89ef80b284b687e54bc3c04c382adad05b7024c67de0c2"
+      url "https://github.com/nkootstra/cue/releases/download/v0.5.0/cue-x86_64-unknown-linux-gnu.tar.gz"
+      sha256 "ea2212b7d05b89b45d7caf57476b39ce65d0e7b5820497f8cf2a3590a5a796e5"
     end
   end
 
@@ -39,6 +39,6 @@ class Cue < Formula
   end
 
   test do
-    assert_equal "cue #0.4.1", shell_output("#{bin}/cue --version").strip
+    assert_equal "cue 0.5.0", shell_output("#{bin}/cue --version").strip
   end
 end
