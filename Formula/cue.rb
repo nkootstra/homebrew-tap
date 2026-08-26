@@ -39,6 +39,6 @@ class Cue < Formula
   end
 
   test do
-    assert_equal "cue 0.6.1", shell_output("#{bin}/cue --version").strip
+    assert_equal "cue #0.6.1", shell_output("#{bin}/cue --version").strip
   end
 end
